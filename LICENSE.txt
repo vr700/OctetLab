@@ -1,0 +1,24 @@
+OctetLab - License Agreement
+Author: Mariano Oblitas (alias vr700)
+Language: Python
+Libraries: tkinter, ttk, ipaddress, math, random
+Year: 2025
+
+Permission is hereby granted to anyone to view, use, study, and modify this software for non-commercial purposes, under the following conditions:
+
+1. Attribution Required:
+   You must give clear and visible credit to the original author:
+   "Based on the work of Mariano Oblitas (alias vr700)"
+
+2. Share-Alike (Copyleft):
+   If you distribute this software or any modified version of it, you must also make the source code available under the same or a compatible license.
+
+3. Non-Commercial Use Only:
+   This software may not be used for commercial purposes, including but not limited to selling, sublicensing, or integrating it into proprietary or commercial products. For commercial use, contact the author to request a separate license.
+
+4. No Warranty:
+   This software is provided "as is", without any express or implied warranty. The author is not liable for any damage or loss resulting from its use.
+
+This license is inspired by the GNU General Public License v3, but includes an additional non-commercial clause.
+
+For questions or commercial licensing, contact: [youremail@example.com]
