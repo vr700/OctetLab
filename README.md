@@ -54,6 +54,7 @@ python OctetLab.py
 
 * **Cisco Topology**: Text file with devices and connections
 * **Cisco CLI**: Ready-to-use configurations for routers and switches
+* **Cisco Routers RIP**: Easy RIP v2 configurations
 * **TXT Results**: Complete subnet tables in text format
 
 ### 5. Interactive Visualization
