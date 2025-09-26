@@ -177,6 +177,7 @@ class SubnetPlannerApp(ttk.Frame):
         ttk.Button(right, text="Exportar Cisco Topology (text)", command=self.export_cisco_topology).pack(fill="x", pady=(2,2))
         ttk.Button(right, text="Exportar Cisco CLI (configs .txt)", command=self.export_cisco_cli).pack(fill="x", pady=(2,2))
         ttk.Button(right, text="Exportar a TXT", command=self.export_to_txt).pack(fill="x", pady=(2,2))
+        ttk.Button(right, text="Generar RIP para Routers", command=self.generate_rip_config).pack(fill="x", pady=(2,2))
 
         out = ttk.Frame(self)
         out.pack(side="top", fill="both", expand=True, padx=6, pady=6)
@@ -787,7 +788,7 @@ class SubnetPlannerApp(ttk.Frame):
             defaultextension=".txt",
             filetypes=[("Archivo de texto", "*.txt")],
             title="Guardar resultados como...",
-            initialfile="tablas_redes.txt"   # nombre por defecto
+            initialfile="tablas_redes.txt"  
         )
         if not file_path:
             return  
@@ -813,6 +814,72 @@ class SubnetPlannerApp(ttk.Frame):
             messagebox.showinfo("Éxito", f"Resultados exportados en:\n{file_path}")
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo exportar: {e}")
+
+    def generate_rip_config(self):
+        if not self.alloc_map:
+            messagebox.showerror("Error", "Primero genere las subredes (Generar Resultados).")
+            return
+
+        filename = filedialog.asksaveasfilename(
+            title="Guardar Config RIP como...",
+            defaultextension=".txt",
+            filetypes=[("Text files", "*.txt")],
+            initialfile="cisco_rip_configs.txt"
+        )
+        if not filename:
+            return
+
+        try:
+
+            router_networks = {rname: set() for rname in self.routers.keys()}
+
+            for rname in self.routers.keys():
+                for i in range(1, 5):  
+                    key = f"{rname}-G{i}"
+                    net = self.alloc_map.get(key)
+                    if net:
+                        router_networks[rname].add(str(net.network_address))
+
+            for idx, c in enumerate(self.connections, start=1):
+                link_name = f"{c.a}-{c.b}-link{idx}"
+                net = self.alloc_map.get(link_name)
+                if not net:
+                    continue
+                netaddr = str(net.network_address)
+                if c.a in router_networks:
+                    router_networks[c.a].add(netaddr)
+                if c.b in router_networks:
+                    router_networks[c.b].add(netaddr)
+
+            lines = []
+            for rname in sorted(self.routers.keys()):
+                lines.append(f"--{rname}:")
+                lines.append("enable")
+                lines.append("conf t")
+                lines.append("router rip")
+                lines.append(" version 2")
+                lines.append(" no auto-summary")
+
+                nets = sorted(router_networks.get(rname, set()), key=lambda ip: ipaddress.IPv4Address(ip))
+                if not nets:
+                    lines.append("! No networks assigned to this router")
+                else:
+                    for net in nets:
+                        lines.append(f" network {net}")
+
+                lines.append("end")
+                lines.append("") 
+
+            with open(filename, 'w', encoding='utf-8', newline='\n') as f:
+                f.write("\n".join(lines))
+
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo generar RIP: {e}")
+            return
+
+        messagebox.showinfo("Exportado", f"Configuraciones RIP exportadas a: {filename}")
+        self.log(f"Configuraciones RIP exportadas: {filename}")
+
 
     # --------------------------
     # Author: Mariano Obltias
