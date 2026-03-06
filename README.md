@@ -1,4 +1,4 @@
-# OctetLab 🐙
+# DEPRECATED OctetLab 🐙
 
 ![OctetLab](https://img.shields.io/badge/OctetLab-IP%20Subnetting%20Tool-brightgreen)
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
